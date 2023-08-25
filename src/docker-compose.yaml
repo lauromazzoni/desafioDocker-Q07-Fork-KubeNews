@@ -1,0 +1,45 @@
+version: '3'
+networks:
+  kubenews_net:
+    driver: bridge
+
+volumes:
+  kubenews-volume:
+
+services:
+  kubenews-app:
+    image: lauromazzoni/kubenews:latest
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+     - kubenews_net
+
+    environment:
+      DB_HOST: "kubenews_dbase"
+      DB_USERNAME: "kubedevnews"
+      DB_PASSWORD: "Pg#123"
+      DB_DATABASE: "kubedevnews"
+
+  kubenews_dbase:
+    image: postgres:latest
+    restart: always
+    networks:
+     - kubenews_net
+    volumes:
+     - kubenews-volume:/data/db
+    environment:
+      POSTGRES_USER: "kubedevnews"
+      POSTGRES_PASSWORD: "Pg#123"
+      POSTGRES_DB: "kubedevnews"
+
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+     - 5050:80
+    networks:
+     - kubenews_net
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "lauro@teste.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
